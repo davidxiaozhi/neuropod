@@ -38,7 +38,9 @@ struct RuntimeOptions
 {
     // Whether or not to use out-of-process execution
     // (using shared memory to communicate between the processes)
-    bool use_ope = false;
+    // ope 模式,使用额外的进程运行模型,使用共享内存进行通信
+    //默认同一进程内,即 Use_ope 为 false
+    bool use_ope = false; 
 
     // These options are only used if use_ope is set to true
     struct OPEOptions
@@ -54,10 +56,12 @@ struct RuntimeOptions
         //
         // If free_memory_every_cycle is false, the user is responsible for periodically calling
         // neuropod::free_unused_shm_blocks()
+        //内部 独立于当前进程之外的模式运行(OPE), OPE 采用共享内存在每次执行推理的时候会被释放,这仅仅使用与简单的推理周期,而线上是 pipline 的形式,在第 T 个推断周期产生T+1周期的输入是不期望遇到的,因此线上模式应该是 false
         bool free_memory_every_cycle = true;
 
         // This option can be used to run the neuropod in an existing worker process
         // If this string is empty, a new worker will be started.
+        //控制队列的名字,这个选项可以允许
         std::string control_queue_name;
     } ope_options;
 
@@ -71,9 +75,11 @@ struct RuntimeOptions
     // Sometimes, it's important to be able to instantiate a Neuropod without
     // immediately loading the model. If this is set to `false`, the model will
     // not be loaded until the `load_model` method is called on the Neuropod.
+    //是否在构造的时候加载模型
     bool load_model_at_construction = true;
 
     // Whether or not to disable shape and type checking when running inference
+    //推理的时候是否禁用尺寸和类型检查,目前这块的功能还未深入了解,后续进行补充
     bool disable_shape_and_type_checking = false;
 };
 

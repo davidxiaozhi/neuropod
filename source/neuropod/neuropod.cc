@@ -25,6 +25,9 @@ limitations under the License.
 namespace neuropod
 {
 
+//重载实现Neuropod 构造器,支持默认后端服务加载模型
+//  neuropod_path 重新包装后的 neuropod 模型文件路径
+//  options 运行时配置信息
 Neuropod::Neuropod(const std::string &neuropod_path, const RuntimeOptions &options)
     : Neuropod(neuropod_path, {}, options)
 {
@@ -43,7 +46,9 @@ Neuropod::Neuropod(const std::string &                 neuropod_path,
     else
     {
         // Get the backend from the registered backends
+        //首先加载解析 neuroPod 模型
         const auto model_config = load_model_config(neuropod_path);
+        //然后基于模型配置文件开始基于制定 backend 进行模型运行
         backend_                = get_backend_for_type(default_backend_overrides,
                                         model_config->platform,
                                         model_config->platform_version_semver)(neuropod_path, options);

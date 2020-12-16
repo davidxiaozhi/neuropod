@@ -136,9 +136,10 @@ TensorSpec::TensorSpec(std::string n, std::vector<Dimension> d, const TensorType
     : name(std::move(n)), dims(std::move(d)), type(t)
 {
 }
-
+//加载 neuroPod 格式模型
 std::unique_ptr<ModelConfig> load_model_config(const std::string &neuropod_path)
 {
+    //获取指定的加载器 本地文件加载器 或 压缩包加载器 
     auto loader = get_loader(neuropod_path);
 
     // Load the config file
